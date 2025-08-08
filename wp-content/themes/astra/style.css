@@ -62,23 +62,3 @@ Astra local fonts feature is based on Webfonts Loader by WordPress Themes Team (
 Licensed under MIT ( https://github.com/WPTT/webfont-loader/blob/master/LICENSE )
 
 /* Note: The CSS files are loaded from assets/css/ folder. */
-
-
-.hero-section {
-  width: 100vw;
-  height: 100vh; /* full screen */
-  background-color: #4f0b0b; /* change or use background-image */
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 0;
-  margin: 0;
-}
-
-.hero-content h1 {
-  font-size: 3rem;
-  font-weight: bold;
-  color: #fff;
-  text-align: center;
-  margin: 0;
-}

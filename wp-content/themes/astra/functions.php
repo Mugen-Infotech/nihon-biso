@@ -204,3 +204,46 @@ require_once ASTRA_THEME_DIR . 'inc/core/markup/class-astra-markup.php';
 require_once ASTRA_THEME_DIR . 'inc/core/deprecated/deprecated-filters.php';
 require_once ASTRA_THEME_DIR . 'inc/core/deprecated/deprecated-hooks.php';
 require_once ASTRA_THEME_DIR . 'inc/core/deprecated/deprecated-functions.php';
+
+
+// custom function
+
+function get_site_title_shortcode() {
+    return get_bloginfo('name');
+}
+add_shortcode('site_title', 'get_site_title_shortcode');
+
+// Register menus
+function register_custom_footer_menus() {
+    register_nav_menus([
+        'footer-support' => __('Footer Support'),
+        'footer-lefal-info' => __('Footer Legal info'),
+        'footer-company-info'   => __('Footer company'),
+    ]);
+}
+add_action('init', 'register_custom_footer_menus');
+
+
+
+function render_custom_footer_menu($atts) {
+    $atts = shortcode_atts([
+        'menu' => '', // expects menu location slug
+    ], $atts, 'footer_menu');
+
+    ob_start();
+
+    if ($atts['menu']) {
+        wp_nav_menu([
+            'theme_location' => $atts['menu'],
+            'container'      => 'div',
+            'container_class'=> 'footer-menu',
+            'menu_class'     => 'footer-menu-list',
+        ]);
+    }
+
+    return ob_get_clean();
+}
+add_shortcode('footer_menu', 'render_custom_footer_menu');
+
+
+

@@ -19,7 +19,7 @@ _deprecated_file(
 <hr />
 <div id="footer" role="contentinfo">
 <!-- If you'd like to support WordPress, having the "powered by" link somewhere on your blog is the best way; it's our only promotion or advertising. -->
-	<!-- <p>
+	<p>
 		<?php
 		printf(
 			/* translators: 1: Site name, 2: WordPress */
@@ -28,7 +28,7 @@ _deprecated_file(
 			'<a href="https://wordpress.org/">WordPress</a>'
 		);
 		?>
-	</p> -->
+	</p>
 </div>
 </div>
 
