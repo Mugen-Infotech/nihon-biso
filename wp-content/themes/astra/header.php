@@ -1,4 +1,5 @@
 <?php
+
 /**
  * The header for Astra Theme.
  *
@@ -10,61 +11,99 @@
  * @since 1.0.0
  */
 
-if ( ! defined( 'ABSPATH' ) ) {
+if (! defined('ABSPATH')) {
 	exit; // Exit if accessed directly.
 }
 
-?><!DOCTYPE html>
+?>
+<!DOCTYPE html>
 <?php astra_html_before(); ?>
 <html <?php language_attributes(); ?>>
+
 <head>
-<?php astra_head_top(); ?>
-<meta charset="<?php bloginfo( 'charset' ); ?>">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<?php
-if ( apply_filters( 'astra_header_profile_gmpg_link', true ) ) {
-	?>
-	<link rel="profile" href="https://gmpg.org/xfn/11"> 
+	<?php astra_head_top(); ?>
+	<meta charset="<?php bloginfo('charset'); ?>">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<?php
-}
-?>
-<?php wp_head(); ?>
-<?php astra_head_bottom(); ?>
+	if (apply_filters('astra_header_profile_gmpg_link', true)) {
+	?>
+		<link rel="profile" href="https://gmpg.org/xfn/11">
+		<link rel="preconnect" href="https://fonts.googleapis.com">
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+		<link href="https://fonts.googleapis.com/css2?family=Inter:wght@700&display=swap" rel="stylesheet">
+
+	<?php
+	}
+
+	?>
+
+	<style>
+		.site-title,
+		.site-title a {
+			font-weight: 700 !important;
+		}
+
+		.ast-builder-grid-row.ast-builder-grid-row-has-sides.ast-builder-grid-row-no-center {
+			width: 100%;
+			max-width: 1280px;
+			margin-left: auto;
+			margin-right: auto;
+			padding-left: 1rem;
+			padding-right: 1rem;
+			box-sizing: border-box;
+		}
+
+		@media (min-width: 640px) {
+			.ast-builder-grid-row.ast-builder-grid-row-has-sides.ast-builder-grid-row-no-center {
+				padding-left: 1.5rem;
+				padding-right: 1.5rem;
+			}
+		}
+
+		@media (min-width: 1024px) {
+			.ast-builder-grid-row.ast-builder-grid-row-has-sides.ast-builder-grid-row-no-center {
+				padding-left: 2rem;
+				padding-right: 2rem;
+			}
+		}
+	</style>
+
+	<?php wp_head(); ?>
+	<?php astra_head_bottom(); ?>
 </head>
 
 <body <?php astra_schema_body(); ?> <?php body_class(); ?>>
-<?php astra_body_top(); ?>
-<?php wp_body_open(); ?>
+	<?php astra_body_top(); ?>
+	<?php wp_body_open(); ?>
 
-<a
-	class="skip-link screen-reader-text"
-	href="#content"
-	title="<?php echo esc_attr( astra_default_strings( 'string-header-skip-link', false ) ); ?>">
-		<?php echo esc_html( astra_default_strings( 'string-header-skip-link', false ) ); ?>
-</a>
+	<a
+		class="skip-link screen-reader-text"
+		href="#content"
+		title="<?php echo esc_attr(astra_default_strings('string-header-skip-link', false)); ?>">
+		<?php echo esc_html(astra_default_strings('string-header-skip-link', false)); ?>
+	</a>
 
-<div
-<?php
-	echo wp_kses_post(
-		astra_attr(
-			'site',
-			array(
-				'id'    => 'page',
-				'class' => 'hfeed site',
+	<div
+		<?php
+		echo wp_kses_post(
+			astra_attr(
+				'site',
+				array(
+					'id'    => 'page',
+					'class' => 'hfeed site',
+				)
 			)
-		)
-	);
-	?>
->
-	<?php
-	astra_header_before();
+		);
+		?>>
+		<?php
+		astra_header_before();
 
-	astra_header();
+		astra_header();
 
-	astra_header_after();
+		astra_header_after();
 
-	astra_content_before();
-	?>
-	<div id="content" class="site-content">
-		<div class="ast-container">
-		<?php astra_content_top(); ?>
+		astra_content_before();
+		?>
+		<div id="content" class="site-content">
+			<div class="ast-container">
+				<?php astra_content_top(); ?>
