@@ -20,13 +20,13 @@
  */
 // ** Database settings - You can get this info from your web host ** //
 /** The name of the database for WordPress */
-define('DB_NAME', '');
+define('DB_NAME', 'biso');
 /** Database username */
-define('DB_USER', '');
+define('DB_USER', 'biso');
 /** Database password */
 define('DB_PASSWORD', '');
 /** Database hostname */
-define('DB_HOST', '');
+define('DB_HOST', 'word.staging.jacos-cloud.com');
 /** Database charset to use in creating database tables. */
 define('DB_CHARSET', 'utf8mb4');
 /** The database collate type. Don't change this if in doubt. */
