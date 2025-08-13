@@ -12,3 +12,18 @@ add_action('wp_footer', function () {
         echo do_shortcode('[elementor-template id="532"]');
     }
 });
+
+function custom_category_list_with_count() {
+    $categories = get_categories();
+    $output = '<ul class="custom-cat-list">';
+    foreach($categories as $category) {
+        $output .= '<li>' . 
+            '<a href="' . get_category_link($category->term_id) . '">' . 
+            $category->name . ' (' . $category->count . ')</a>' . 
+        '</li>';
+    }
+    $output .= '</ul>';
+    return $output;
+}
+add_shortcode('category_list_count', 'custom_category_list_with_count');
+
