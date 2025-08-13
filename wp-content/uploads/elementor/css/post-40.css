@@ -18,6 +18,32 @@
     margin-top: 8px;
 }
 
+/* Hide original file input */
+.custom-file-upload input[type="file"] {
+    display: none;
+}
+
+/* Style the custom label */
+.custom-file-upload {
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: #b91c1c; /* red */
+    color: white;
+    font-weight: bold;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.custom-file-upload:hover {
+    background-color: #dc2626; /* hover red */
+}
+
+/* Change text inside label */
+.upload-label {
+    pointer-events: none;
+}
+
 
 #left{
     width: 47%;
