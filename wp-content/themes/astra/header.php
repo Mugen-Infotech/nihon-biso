@@ -37,36 +37,6 @@ if (! defined('ABSPATH')) {
 
 	?>
 
-	<style>
-		.site-title,
-		.site-title a {
-			font-weight: 700 !important;
-		}
-
-		.ast-builder-grid-row.ast-builder-grid-row-has-sides.ast-builder-grid-row-no-center {
-			width: 100%;
-			max-width: 1280px;
-			margin-left: auto;
-			margin-right: auto;
-			padding-left: 1rem;
-			padding-right: 1rem;
-			box-sizing: border-box;
-		}
-
-		@media (min-width: 640px) {
-			.ast-builder-grid-row.ast-builder-grid-row-has-sides.ast-builder-grid-row-no-center {
-				padding-left: 1.5rem;
-				padding-right: 1.5rem;
-			}
-		}
-
-		@media (min-width: 1024px) {
-			.ast-builder-grid-row.ast-builder-grid-row-has-sides.ast-builder-grid-row-no-center {
-				padding-left: 2rem;
-				padding-right: 2rem;
-			}
-		}
-	</style>
 
 	<?php wp_head(); ?>
 	<?php astra_head_bottom(); ?>
