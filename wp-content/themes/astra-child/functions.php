@@ -116,3 +116,14 @@ function first_50_chars_shortcode($atts = [])
     return mb_strimwidth($content, 0, 200, '...', 'UTF-8'); // Trim to 50 characters
 }
 add_shortcode('first50', 'first_50_chars_shortcode');
+
+
+add_action('elementor/query/featured_posts', function( $query ) {
+    $sticky_posts = get_option( 'sticky_posts' );
+    if ( ! empty( $sticky_posts ) ) {
+        $query->set( 'post__in', $sticky_posts );
+        $query->set( 'ignore_sticky_posts', 1 ); // Prevent normal sticky behavior
+    } else {
+        $query->set( 'post__in', array(0) ); // No sticky posts, return empty
+    }
+});
