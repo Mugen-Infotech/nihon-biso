@@ -35,6 +35,7 @@ wp_footer();
 ?>
 
 <script>
+	// Header Animation
 	document.addEventListener("DOMContentLoaded", function() {
 		// Inject CSS styles into <head>
 		const style = document.createElement('style');
@@ -69,6 +70,23 @@ wp_footer();
 				lastScrollTop = scrollTop <= 0 ? 0 : scrollTop;
 			});
 		}
+	});
+
+	// Sticky nav animation
+	const btn = document.querySelector('.elementor-element-b422347');
+	let scrollTimer;
+
+	window.addEventListener('scroll', () => {
+		// While scrolling: move slightly left
+		btn.style.transform = 'translateY(-50%) translateX(-8px)';
+
+		// Clear previous timer
+		clearTimeout(scrollTimer);
+
+		// When scrolling stops: move back to right: 0
+		scrollTimer = setTimeout(() => {
+			btn.style.transform = 'translateY(-50%) translateX(0)';
+		}, 150); // delay in ms
 	});
 </script>
 
