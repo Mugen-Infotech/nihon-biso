@@ -18,19 +18,32 @@ add_action('wp_footer', function () {
 // Register Shortcode
 
 
-function get_categories_with_counts_shortcode() {
+function get_categories_with_counts_shortcode()
+{
     $categories = get_categories([
         'hide_empty' => false,
     ]);
+    $current_cat = isset($_GET['filter_cat']) ? intval($_GET['filter_cat']) : 0;
 
     ob_start();
 
     echo '<div class="category-cards-wrapper">';
+
+    echo ' <a href="<?php echo esc_url($category_link); ?>" class="elementor-widget-wrap elementor-flex-align-center elementor-element-populated elementor-inline-flex category-link" style="text-decoration: none;">
+            <div class="elementor-heading-title elementor-size-default category-name">
+              すべて
+            </div>
+      
+        </a>';
     foreach ($categories as $category) {
         // Use your blog page URL + query param
         $category_link = add_query_arg('filter_cat', $category->term_id, site_url('/blogs/'));
+        $active_class = ($current_cat === $category->term_id) ? ' active' : '';
+
 ?>
-        <a href="<?php echo esc_url($category_link); ?>" class="elementor-widget-wrap elementor-flex-align-center elementor-element-populated elementor-inline-flex category-link" style="text-decoration: none;">
+        <a href="<?php echo esc_url($category_link); ?>" class="elementor-widget-wrap elementor-flex-align-center elementor-element-populated elementor-inline-flex category-link<?php echo $active_class; ?>"
+
+        style="text-decoration: none;">
             <div class="elementor-heading-title elementor-size-default category-name">
                 <?php echo esc_html($category->name); ?>
             </div>
@@ -52,15 +65,16 @@ function get_categories_with_counts_shortcode() {
 add_shortcode('category_cards', 'category_cards_shortcode');
 
 
-function shortcode_latest_sticky_post_data( $atts ) {
-    $atts = shortcode_atts( array(
+function shortcode_latest_sticky_post_data($atts)
+{
+    $atts = shortcode_atts(array(
         'data' => 'title', // default
-    ), $atts, 'latest_sticky_post' );
+    ), $atts, 'latest_sticky_post');
 
     // Get sticky posts
-    $sticky_posts = get_option( 'sticky_posts' );
+    $sticky_posts = get_option('sticky_posts');
 
-    if ( empty( $sticky_posts ) ) {
+    if (empty($sticky_posts)) {
         return '';
     }
 
@@ -73,9 +87,9 @@ function shortcode_latest_sticky_post_data( $atts ) {
         'order'               => 'DESC'
     );
 
-    $query = new WP_Query( $args );
+    $query = new WP_Query($args);
 
-    if ( ! $query->have_posts() ) {
+    if (! $query->have_posts()) {
         return '';
     }
 
@@ -84,57 +98,57 @@ function shortcode_latest_sticky_post_data( $atts ) {
     // Make sure functions use this post
     $post_id = $sticky_post->ID;
 
-    
+
 
     $result = '';
-    switch ( strtolower( $atts['data'] ) ) {
-        
+    switch (strtolower($atts['data'])) {
+
         case 'title':
-            $result = get_the_title( $post_id );
+            $result = get_the_title($post_id);
             break;
 
         case 'url':
-            $result = esc_url( get_permalink( $post_id ) );
+            $result = esc_url(get_permalink($post_id));
             break;
 
         case 'image':
-            if ( has_post_thumbnail( $post_id ) ) {
-                $result = esc_url_raw( get_the_post_thumbnail_url( $post_id, 'full' ) );
+            if (has_post_thumbnail($post_id)) {
+                $result = esc_url_raw(get_the_post_thumbnail_url($post_id, 'full'));
             } else {
-                $result = esc_url_raw( get_template_directory_uri() . '/assets/default-placeholder.png' );
+                $result = esc_url_raw(get_template_directory_uri() . '/assets/default-placeholder.png');
             }
             break;
 
         case 'category':
-            $categories = get_the_category( $post_id );
-            if ( ! empty( $categories ) ) {
-                $result = esc_html( $categories[0]->name );
+            $categories = get_the_category($post_id);
+            if (! empty($categories)) {
+                $result = esc_html($categories[0]->name);
             }
             break;
 
         case 'date':
-            $result = get_the_date( '', $post_id );
+            $result = get_the_date('', $post_id);
             break;
 
         case 'author':
-            $result = esc_html( get_the_author_meta( 'display_name', $sticky_post->post_author ) );
+            $result = esc_html(get_the_author_meta('display_name', $sticky_post->post_author));
             break;
 
         case 'tags':
-            $tags = get_the_tags( $post_id );
-            if ( ! empty( $tags ) ) {
+            $tags = get_the_tags($post_id);
+            if (! empty($tags)) {
                 $tag_spans = array();
-                foreach ( $tags as $tag ) {
-                    $tag_spans[] = '<span class="post-tag">' . esc_html( $tag->name ) . '</span>';
+                foreach ($tags as $tag) {
+                    $tag_spans[] = '<span class="post-tag">' . esc_html($tag->name) . '</span>';
                 }
-                $result = implode( ' ', $tag_spans );
+                $result = implode(' ', $tag_spans);
             }
             break;
 
         case 'excerpt':
-            $content = get_post_field( 'post_content', $post_id );
-            $content = wp_strip_all_tags( $content );
-            $result  = esc_html( mb_strimwidth( $content, 0, 200, '...', 'UTF-8' ) );
+            $content = get_post_field('post_content', $post_id);
+            $content = wp_strip_all_tags($content);
+            $result  = esc_html(mb_strimwidth($content, 0, 200, '...', 'UTF-8'));
             break;
 
         default:
@@ -145,7 +159,7 @@ function shortcode_latest_sticky_post_data( $atts ) {
     return $result;
 }
 
-add_shortcode( 'latest_sticky_post', 'shortcode_latest_sticky_post_data' );
+add_shortcode('latest_sticky_post', 'shortcode_latest_sticky_post_data');
 
 add_shortcode('category_counts', 'get_categories_with_counts_shortcode');
 
@@ -180,20 +194,20 @@ function first_50_chars_shortcode($atts = [])
 add_shortcode('first50', 'first_50_chars_shortcode');
 
 
-add_action('elementor/query/featured_posts', function( $query ) {
-    $sticky_posts = get_option( 'sticky_posts' );
-    if ( ! empty( $sticky_posts ) ) {
-        $query->set( 'post__in', $sticky_posts );
-        $query->set( 'ignore_sticky_posts', 1 ); // Prevent normal sticky behavior
+add_action('elementor/query/featured_posts', function ($query) {
+    $sticky_posts = get_option('sticky_posts');
+    if (! empty($sticky_posts)) {
+        $query->set('post__in', $sticky_posts);
+        $query->set('ignore_sticky_posts', 1); // Prevent normal sticky behavior
     } else {
-        $query->set( 'post__in', array(0) ); // No sticky posts, return empty
+        $query->set('post__in', array(0)); // No sticky posts, return empty
     }
 });
 
 
-add_action( 'elementor/query/blog_loop', function( $query ) {
-    if ( isset($_GET['filter_cat']) && !empty($_GET['filter_cat']) ) {
+add_action('elementor/query/blog_loop', function ($query) {
+    if (isset($_GET['filter_cat']) && !empty($_GET['filter_cat'])) {
         $cat_id = intval($_GET['filter_cat']);
-        $query->set( 'cat', $cat_id ); // filter by category
+        $query->set('cat', $cat_id); // filter by category
     }
 });
