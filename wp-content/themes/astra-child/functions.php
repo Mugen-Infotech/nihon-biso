@@ -20,7 +20,8 @@ add_action('wp_footer', function () {
 
 
 
-function get_categories_with_counts_shortcode() {
+function get_categories_with_counts_shortcode()
+{
     $categories = get_categories([
         'hide_empty' => false,
     ]);
@@ -45,13 +46,15 @@ function get_categories_with_counts_shortcode() {
         $category_link = add_query_arg('filter_cat', $category->term_id, site_url('/blogs/'));
         $active_class = ($current_cat === $category->term_id) ? ' active' : '';
 
+        if(!$category->count > 0) continue;
+
         echo '<a href="' . esc_url($category_link) . '" class="elementor-widget-wrap elementor-flex-align-center elementor-element-populated elementor-inline-flex category-link' . $active_class . '" style="text-decoration: none;">
                 <div class="elementor-heading-title elementor-size-default category-name">'
-                    . esc_html($category->name) .
-                '</div>
+            . esc_html($category->name) .
+            '</div>
                 <div class="elementor-badge elementor-badge-number category-badge">'
-                    . esc_html($category->count) .
-                '</div>
+            . esc_html($category->count) .
+            '</div>
               </a>';
     }
 
