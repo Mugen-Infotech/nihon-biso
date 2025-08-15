@@ -231,42 +231,23 @@ add_action('elementor/query/blog_loop', function ($query) {
 
 
 // Sticky post handler
-// add_action('save_post', function ($post_id) {
-//     // Only run in admin and for published posts
-//     if ( wp_is_post_revision($post_id) || get_post_status($post_id) !== 'publish' ) {
-//         return;
-//     }
-
-//     // Check if this post is set as sticky
-//     if ( is_sticky($post_id) ) {
-//         $sticky_posts = get_option('sticky_posts', []);
-
-//         // Remove sticky flag from all other posts
-//         foreach ($sticky_posts as $sticky_id) {
-//             if ($sticky_id != $post_id) {
-//                 unstick_post($sticky_id);
-//             }
-//         }
-//     }
-// });
 
 
 
-add_action('save_post', function ($post_id) {
-    if (wp_is_post_autosave($post_id) || wp_is_post_revision($post_id)) return;
-
-    // Run late so sticky flag has been applied.
-    if (!is_sticky($post_id)) return;
-
-    $sticky = get_option('sticky_posts', []);
-    foreach ($sticky as $sid) {
-        if ((int)$sid !== (int)$post_id) {
-            unstick_post($sid);
-        }
+add_action('save_post', 'limit_to_one_sticky_post', 10, 2);
+function limit_to_one_sticky_post($post_id, $post) {
+    // Only apply to posts, not pages or CPTs
+    if ($post->post_type !== 'post') return;
+    
+    // Check if this post is being set as sticky
+    if (isset($_POST['sticky']) && $_POST['sticky'] === 'sticky') {
+        // Get all current sticky posts
+        $sticky_posts = get_option('sticky_posts');
+        
+        // Remove all except current post
+        $sticky_posts = array($post_id);
+        
+        // Update the sticky posts option
+        update_option('sticky_posts', $sticky_posts);
     }
-}, 999);
-
-
-// add_action( 'elementor/query/my_loop', function( $query ) {
-//     $query->set( 'post__not_in', get_option( 'sticky_posts' ) );
-// });
+}
