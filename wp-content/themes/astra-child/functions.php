@@ -46,7 +46,7 @@ function get_categories_with_counts_shortcode()
         $category_link = add_query_arg('filter_cat', $category->term_id, site_url('/blogs/'));
         $active_class = ($current_cat === $category->term_id) ? ' active' : '';
 
-        if(!$category->count > 0) continue;
+        if (!$category->count > 0) continue;
 
         echo '<a href="' . esc_url($category_link) . '" class="elementor-widget-wrap elementor-flex-align-center elementor-element-populated elementor-inline-flex category-link' . $active_class . '" style="text-decoration: none;">
                 <div class="elementor-heading-title elementor-size-default category-name">'
@@ -118,12 +118,19 @@ function shortcode_latest_sticky_post_data($atts)
             break;
 
         case 'image':
+            $post_id = get_the_ID();
             if (has_post_thumbnail($post_id)) {
-                $result = esc_url_raw(get_the_post_thumbnail_url($post_id, 'full'));
+                $image_url = esc_url_raw(get_the_post_thumbnail_url($post_id, 'full'));
             } else {
-                $result = esc_url_raw(get_template_directory_uri() . '/assets/default-placeholder.png');
+                // http://localhost/nihon-biso/wp-content/uploads/2025/08/placeholder.png
+                // $image_url = esc_url_raw(get_template_directory_uri() . '/assets/default-placeholder.png');
+
+                $upload_dir = wp_upload_dir();
+                $image_url = esc_url_raw($upload_dir['baseurl'] . '/2025/08/placeholder.png');
             }
+            $result = '<img class="sticky-post-img" src="' . esc_url($image_url) . '" alt="' . esc_attr(get_the_title($post_id)) . '" />';
             break;
+
 
         case 'category':
             $categories = get_the_category($post_id);
@@ -215,5 +222,51 @@ add_action('elementor/query/blog_loop', function ($query) {
     if (isset($_GET['filter_cat']) && !empty($_GET['filter_cat'])) {
         $cat_id = intval($_GET['filter_cat']);
         $query->set('cat', $cat_id); // filter by category
+
+    }
+    else{
+        $query->set('post__not_in', get_option('sticky_posts'));
     }
 });
+
+
+// Sticky post handler
+// add_action('save_post', function ($post_id) {
+//     // Only run in admin and for published posts
+//     if ( wp_is_post_revision($post_id) || get_post_status($post_id) !== 'publish' ) {
+//         return;
+//     }
+
+//     // Check if this post is set as sticky
+//     if ( is_sticky($post_id) ) {
+//         $sticky_posts = get_option('sticky_posts', []);
+
+//         // Remove sticky flag from all other posts
+//         foreach ($sticky_posts as $sticky_id) {
+//             if ($sticky_id != $post_id) {
+//                 unstick_post($sticky_id);
+//             }
+//         }
+//     }
+// });
+
+
+
+add_action('save_post', function ($post_id) {
+    if (wp_is_post_autosave($post_id) || wp_is_post_revision($post_id)) return;
+
+    // Run late so sticky flag has been applied.
+    if (!is_sticky($post_id)) return;
+
+    $sticky = get_option('sticky_posts', []);
+    foreach ($sticky as $sid) {
+        if ((int)$sid !== (int)$post_id) {
+            unstick_post($sid);
+        }
+    }
+}, 999);
+
+
+// add_action( 'elementor/query/my_loop', function( $query ) {
+//     $query->set( 'post__not_in', get_option( 'sticky_posts' ) );
+// });

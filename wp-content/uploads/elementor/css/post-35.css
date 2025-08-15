@@ -49,7 +49,7 @@
 
 }/* End custom CSS */
 /* Start custom CSS for container, class: .elementor-element-d57a5f8 */.elementor-35 .elementor-element.elementor-element-d57a5f8{
-    background-image: ulr('https://wallup.net/wp-content/uploads/2018/10/06/57291-nature-birds-hummingbirds-depth-of-field.jpg')
+    background-image: url([latest_sticky_post data="image"])        !important;
 }/* End custom CSS */
 /* Start custom CSS for container, class: .elementor-element-9230206 */.elementor-35 .elementor-element.elementor-element-9230206{
     flex: 0 0 auto;
