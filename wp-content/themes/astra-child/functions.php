@@ -18,44 +18,47 @@ add_action('wp_footer', function () {
 // Register Shortcode
 
 
-function get_categories_with_counts_shortcode()
-{
+
+
+function get_categories_with_counts_shortcode() {
     $categories = get_categories([
         'hide_empty' => false,
     ]);
+
     $current_cat = isset($_GET['filter_cat']) ? intval($_GET['filter_cat']) : 0;
 
     ob_start();
-
     echo '<div class="category-cards-wrapper">';
 
-    echo ' <a href="<?php echo esc_url($category_link); ?>" class="elementor-widget-wrap elementor-flex-align-center elementor-element-populated elementor-inline-flex category-link" style="text-decoration: none;">
+    // "All" link
+    $all_link = site_url('/blogs/');
+    $all_active_class = ($current_cat === 0) ? ' active' : '';
+
+    echo '<a href="' . esc_url($all_link) . '" class="elementor-widget-wrap elementor-flex-align-center elementor-element-populated elementor-inline-flex category-link' . $all_active_class . '" style="text-decoration: none;">
             <div class="elementor-heading-title elementor-size-default category-name">
               すべて
             </div>
-      
-        </a>';
+          </a>';
+
+    // Category links
     foreach ($categories as $category) {
-        // Use your blog page URL + query param
         $category_link = add_query_arg('filter_cat', $category->term_id, site_url('/blogs/'));
         $active_class = ($current_cat === $category->term_id) ? ' active' : '';
 
-?>
-        <a href="<?php echo esc_url($category_link); ?>" class="elementor-widget-wrap elementor-flex-align-center elementor-element-populated elementor-inline-flex category-link<?php echo $active_class; ?>"
-
-        style="text-decoration: none;">
-            <div class="elementor-heading-title elementor-size-default category-name">
-                <?php echo esc_html($category->name); ?>
-            </div>
-            <div class="elementor-badge elementor-badge-number category-badge">
-                <?php echo esc_html($category->count); ?>
-            </div>
-        </a>
-<?php
+        echo '<a href="' . esc_url($category_link) . '" class="elementor-widget-wrap elementor-flex-align-center elementor-element-populated elementor-inline-flex category-link' . $active_class . '" style="text-decoration: none;">
+                <div class="elementor-heading-title elementor-size-default category-name">'
+                    . esc_html($category->name) .
+                '</div>
+                <div class="elementor-badge elementor-badge-number category-badge">'
+                    . esc_html($category->count) .
+                '</div>
+              </a>';
     }
+
     echo '</div>';
     return ob_get_clean();
 }
+
 
 
 // add_shortcode('categories_with_counts', 'get_categories_with_counts_shortcode');
