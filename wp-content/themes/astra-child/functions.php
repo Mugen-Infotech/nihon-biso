@@ -118,17 +118,17 @@ function shortcode_latest_sticky_post_data($atts)
             break;
 
         case 'image':
-            $post_id = get_the_ID();
-            if (has_post_thumbnail($post_id)) {
-                $image_url = esc_url_raw(get_the_post_thumbnail_url($post_id, 'full'));
-            } else {
-                // http://localhost/nihon-biso/wp-content/uploads/2025/08/placeholder.png
-                // $image_url = esc_url_raw(get_template_directory_uri() . '/assets/default-placeholder.png');
-
-                $upload_dir = wp_upload_dir();
+		  if (has_post_thumbnail($post_id)) {
+				$image_url = esc_url_raw(get_the_post_thumbnail_url($post_id, 'full'));
+			} else {
+				// fallback
+				$upload_dir = wp_upload_dir();
                 $image_url = esc_url_raw($upload_dir['baseurl'] . '/2025/08/placeholder.png');
-            }
-            $result = '<img class="sticky-post-img" src="' . esc_url($image_url) . '" alt="' . esc_attr(get_the_title($post_id)) . '" />';
+			}
+					$result = '<img class="sticky-post-img" src="' . esc_url($image_url) . '" alt="' . esc_attr(get_the_title($post_id)) . '" />';
+			
+// 			$result = '<div class="sticky-post-img" style="background-image: url(' . esc_url($image_url) . ');"></div>';
+
             break;
 
 
@@ -202,7 +202,7 @@ function first_50_chars_shortcode($atts = [])
 
     $content = get_post_field('post_content', $post->ID); // Get content of current post
     $content = wp_strip_all_tags($content); // Remove HTML
-    return mb_strimwidth($content, 0, 200, '...', 'UTF-8'); // Trim to 50 characters
+    return mb_strimwidth($content, 0, 100, '...', 'UTF-8'); // Trim to 50 characters
 }
 add_shortcode('first50', 'first_50_chars_shortcode');
 

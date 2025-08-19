@@ -12,3 +12,6 @@
 @import url("../astra/style.css");
 
 /* Add your custom styles below */ 
+p{
+	color: red!important;
+}
