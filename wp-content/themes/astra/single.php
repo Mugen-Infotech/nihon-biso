@@ -14,6 +14,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 get_header(); ?>
 
+
 <?php if ( astra_page_layout() === 'left-sidebar' ) { ?>
 
 	<?php get_sidebar(); ?>
