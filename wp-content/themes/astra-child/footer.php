@@ -88,7 +88,115 @@ wp_footer();
 			btn.style.transform = 'translateY(-50%) translateX(0)';
 		}, 150); // delay in ms
 	});
+	
+
+	
 </script>
+
+<script>
+(function(){
+  const uploadArea = document.getElementById('custom-upload-area');
+  const fileInput = document.getElementById('custom-upload');
+  const previewBox = document.getElementById('image-preview');
+  const counter = document.getElementById('image-counter');
+  const errorBox = document.getElementById('image-error');
+  const MAX_IMAGES = 5;
+
+  let imagesArray = [];
+
+  if(!uploadArea || !fileInput || !previewBox) return;
+
+  uploadArea.addEventListener('click', () => fileInput.click());
+
+  uploadArea.addEventListener('dragover', e => {
+    e.preventDefault();
+    uploadArea.classList.add('hover');
+  });
+  uploadArea.addEventListener('dragleave', e => {
+    e.preventDefault();
+    uploadArea.classList.remove('hover');
+  });
+  uploadArea.addEventListener('drop', e => {
+    e.preventDefault();
+    uploadArea.classList.remove('hover');
+    handleFiles(e.dataTransfer.files);
+  });
+
+  fileInput.addEventListener('change', () => handleFiles(fileInput.files));
+
+  function handleFiles(files){
+    errorBox.textContent = '';
+    for(let file of files){
+      if(!file.type.startsWith('image/')) continue;
+      if(imagesArray.length >= MAX_IMAGES){
+        // Add your error message here if needed
+        // errorBox.textContent = "Maximum 5 images allowed";
+        break;
+      }
+      imagesArray.push(file);
+      addPreview(file, imagesArray.length - 1);
+    }
+    updateFileInput();
+    updateCounter();
+  }
+
+  function addPreview(file, index){
+    const reader = new FileReader();
+    reader.onload = e => {
+      const container = document.createElement('div');
+      container.classList.add('preview-item');
+      container.dataset.index = index;
+
+      const img = document.createElement('img');
+      img.src = e.target.result;
+      img.title = file.name;
+
+      const filename = document.createElement('div');
+      filename.textContent = file.name;
+      filename.classList.add('filename');
+
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.textContent = '×';
+      btn.classList.add('delete-btn');
+      btn.addEventListener('click', () => {
+        // Remove only this image
+        const idx = imagesArray.indexOf(file);
+        if(idx > -1){
+          imagesArray.splice(idx, 1);
+          container.remove();
+          updateFileInput();
+          updateCounter();
+        }
+      });
+
+      container.appendChild(img);
+      container.appendChild(filename);
+      container.appendChild(btn);
+      previewBox.appendChild(container);
+    };
+    reader.readAsDataURL(file);
+  }
+
+  function updateFileInput(){
+    const dataTransfer = new DataTransfer();
+    imagesArray.forEach(file => dataTransfer.items.add(file));
+    fileInput.files = dataTransfer.files;
+
+  // Update CF7 hidden file field
+  const cf7FileField = document.getElementById('cf7-file-field');
+	  if(cf7FileField){
+		cf7FileField.files = dataTransfer.files;
+	  }
+	}
+
+
+  function updateCounter(){
+    counter.textContent = `${imagesArray.length} / ${MAX_IMAGES} images uploaded`;
+  }
+})();
+</script>
+
 
 
 </body>
