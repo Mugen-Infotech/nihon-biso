@@ -251,3 +251,8 @@ function limit_to_one_sticky_post($post_id, $post) {
         update_option('sticky_posts', $sticky_posts);
     }
 }
+
+remove_action( 'wp_head', '_wp_render_title_tag', 1 );
+add_action( 'wp_head', function() {
+    echo '<title>' . esc_html( get_bloginfo( 'name' ) ) . '</title>';
+}, 1 );

@@ -151,9 +151,9 @@ wp_footer();
       img.src = e.target.result;
       img.title = file.name;
 
-      const filename = document.createElement('div');
-      filename.textContent = file.name;
-      filename.classList.add('filename');
+//       const filename = document.createElement('div');
+//       filename.textContent = file.name;
+//       filename.classList.add('filename');
 
       const btn = document.createElement('button');
       btn.type = 'button';
@@ -171,7 +171,7 @@ wp_footer();
       });
 
       container.appendChild(img);
-      container.appendChild(filename);
+//       container.appendChild(filename);
       container.appendChild(btn);
       previewBox.appendChild(container);
     };
@@ -192,9 +192,24 @@ wp_footer();
 
 
   function updateCounter(){
-    counter.textContent = `${imagesArray.length} / ${MAX_IMAGES} images uploaded`;
+    counter.textContent = `アップロード済み写真数： ${imagesArray.length} / ${MAX_IMAGES}`;
   }
 })();
+	
+document.addEventListener('wpcf7mailsent', function(event) {
+  const form = event.target;
+  const counter = document.getElementById('image-counter');
+ 
+  // Reset standard fields
+  form.reset();
+ 
+  // Clear preview thumbnails
+  const previewContainer = form.querySelector('.preview-container');
+  if (previewContainer) {
+    previewContainer.innerHTML = '';
+	counter.textContent = `アップロード済み写真数： 0 / 5`;
+  }
+}, false);
 </script>
 
 
