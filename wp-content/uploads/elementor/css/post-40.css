@@ -108,7 +108,16 @@
 }
 
 .wpcf7-list-item first{
-    margin: 0px;
+    margin: 0px !important;
+}
+
+.wpcf7-spinner {
+    margin: 10px 10px 0;
+}
+
+.wpcf7-response-output{
+    margin: 0 !important;
+    margin-top: -35px !important;
 }/* End custom CSS */
 /* Start custom CSS for container, class: .elementor-element-02e5a0f */#left{
     width: 47%;
