@@ -20,6 +20,99 @@ add_action('wp_footer', function () {
 
 
 
+// function get_categories_with_counts_shortcode()
+// {
+//     $categories = get_categories([
+//         'hide_empty' => false,
+//     ]);
+
+//     $current_cat = isset($_GET['filter_cat']) ? intval($_GET['filter_cat']) : 0;
+
+//     ob_start();
+//     echo '<div class="category-cards-wrapper">';
+
+//     // "All" link
+//     $all_link = site_url('/blogs/');
+//     $all_active_class = ($current_cat === 0) ? ' active' : '';
+
+//     echo '<a href="' . esc_url($all_link) . '" class="elementor-widget-wrap elementor-flex-align-center elementor-element-populated elementor-inline-flex category-link' . $all_active_class . '" style="text-decoration: none;">
+//             <div class="elementor-heading-title elementor-size-default category-name">
+//               すべて
+//             </div>
+//           </a>';
+
+//     // Category links
+//     foreach ($categories as $category) {
+//         $category_link = add_query_arg('filter_cat', $category->term_id, site_url('/blogs/'));
+//         $active_class = ($current_cat === $category->term_id) ? ' active' : '';
+
+//         if (!$category->count > 0) continue;
+
+//         echo '<a href="' . esc_url($category_link) . '" class="elementor-widget-wrap elementor-flex-align-center elementor-element-populated elementor-inline-flex category-link' . $active_class . '" style="text-decoration: none;">
+//                 <div class="elementor-heading-title elementor-size-default category-name">'
+//             . esc_html($category->name) .
+//             '</div>
+//                 <div class="elementor-badge elementor-badge-number category-badge">'
+//             . esc_html($category->count) .
+//             '</div>
+//               </a>';
+//     }
+
+//     echo '</div>';
+//     return ob_get_clean();
+// }
+
+
+
+
+// function get_categories_with_counts_shortcode()
+// {
+//     $categories = get_categories([
+//         'hide_empty' => false,
+//     ]);
+
+//     $current_cat = isset($_GET['filter_cat']) ? intval($_GET['filter_cat']) : 0;
+
+//     ob_start();
+//     echo '<div class="category-cards-wrapper">';
+
+//     // "All" link
+//     $all_link = site_url('/blogs/');
+//     $all_active_class = ($current_cat === 0) ? ' active' : '';
+
+//     echo '<a href="' . esc_url($all_link) . '" class="elementor-widget-wrap elementor-flex-align-center elementor-element-populated elementor-inline-flex category-link' . $all_active_class . '" style="text-decoration: none;">
+//             <div class="elementor-heading-title elementor-size-default category-name">
+//               すべて
+//             </div>
+//           </a>';
+
+//     // Category links
+//     foreach ($categories as $category) {
+//         // Skip category named '作業実績'
+//         if ($category->name === '作業実績') continue;
+
+//         $category_link = add_query_arg('filter_cat', $category->term_id, site_url('/blogs/'));
+//         $active_class = ($current_cat === $category->term_id) ? ' active' : '';
+
+//         if (!$category->count > 0) continue;
+
+//         echo '<a href="' . esc_url($category_link) . '" class="elementor-widget-wrap elementor-flex-align-center elementor-element-populated elementor-inline-flex category-link' . $active_class . '" style="text-decoration: none;">
+//                 <div class="elementor-heading-title elementor-size-default category-name">'
+//             . esc_html($category->name) .
+//             '</div>
+//                 <div class="elementor-badge elementor-badge-number category-badge">'
+//             . esc_html($category->count) .
+//             '</div>
+//               </a>';
+//     }
+
+//     echo '</div>';
+//     return ob_get_clean();
+// }
+// 
+// 
+
+
 function get_categories_with_counts_shortcode()
 {
     $categories = get_categories([
@@ -41,19 +134,42 @@ function get_categories_with_counts_shortcode()
             </div>
           </a>';
 
-    // Category links
+    // Get 作業実績 category ID
+    $exclude_cat = get_category_by_slug('作業実績');
+    $exclude_cat_id = $exclude_cat ? $exclude_cat->term_id : 0;
+
     foreach ($categories as $category) {
+        // Skip category named '作業実績'
+        if ($category->name === '作業実績') continue;
+
+        // Get all posts in this category
+        $posts_in_cat = get_posts([
+            'category' => $category->term_id,
+            'posts_per_page' => -1,
+            'fields' => 'ids',
+        ]);
+
+        // Filter out posts that have 作業実績 category
+        $filtered_posts = [];
+        foreach ($posts_in_cat as $post_id) {
+            $post_cats = wp_get_post_categories($post_id);
+            if ($exclude_cat_id && in_array($exclude_cat_id, $post_cats)) {
+                continue; // Skip if post has 作業実績
+            }
+            $filtered_posts[] = $post_id;
+        }
+
         $category_link = add_query_arg('filter_cat', $category->term_id, site_url('/blogs/'));
         $active_class = ($current_cat === $category->term_id) ? ' active' : '';
 
-        if (!$category->count > 0) continue;
+        if (count($filtered_posts) === 0) continue;
 
         echo '<a href="' . esc_url($category_link) . '" class="elementor-widget-wrap elementor-flex-align-center elementor-element-populated elementor-inline-flex category-link' . $active_class . '" style="text-decoration: none;">
                 <div class="elementor-heading-title elementor-size-default category-name">'
             . esc_html($category->name) .
             '</div>
                 <div class="elementor-badge elementor-badge-number category-badge">'
-            . esc_html($category->count) .
+            . esc_html(count($filtered_posts)) .
             '</div>
               </a>';
     }
@@ -61,8 +177,6 @@ function get_categories_with_counts_shortcode()
     echo '</div>';
     return ob_get_clean();
 }
-
-
 
 // add_shortcode('categories_with_counts', 'get_categories_with_counts_shortcode');
 
@@ -177,6 +291,14 @@ add_shortcode('latest_sticky_post', 'shortcode_latest_sticky_post_data');
 add_shortcode('category_counts', 'get_categories_with_counts_shortcode');
 
 
+function dynamic_header_text_shortcode() {
+    $type = isset($_GET['type']) ? sanitize_text_field($_GET['type']) : '';
+    return $type === 'personal' ? '個人向け' : '法人向け';
+}
+add_shortcode('dynamic_header_text', 'dynamic_header_text_shortcode');
+
+
+
 function show_category_data_shortcode($atts)
 {
     $atts = shortcode_atts([
@@ -217,17 +339,93 @@ add_action('elementor/query/featured_posts', function ($query) {
     }
 });
 
+function is_active_tab_shortcode($atts) {
+
+
+//     $current_type = isset($_GET['type']) ? sanitize_text_field($_GET['type']) : 'company';
+	
+// 	if($atts['type'] =='personal'){
+// 		return 'custom-active-tab';
+// 	}
+// 	else{
+// 			return '';
+// 	}
+// 	
+// 	
+// 	
+
+	
+    $atts = shortcode_atts(array(
+        'type' => 'company'
+    ), $atts);
+
+    // Get current URL type
+    $current_type = isset($_GET['type']) ? sanitize_text_field($_GET['type']) : 'company';
+
+    // Compare URL type with shortcode attribute
+    if ($current_type === $atts['type']) {
+        return 'custom-active-tab';
+    } else {
+        return '';
+    }
+}
+add_shortcode('is_active', 'is_active_tab_shortcode');
+
+
+// add_action('elementor/query/blog_loop', function ($query) {
+//     if (isset($_GET['filter_cat']) && !empty($_GET['filter_cat'])) {
+//         $cat_id = intval($_GET['filter_cat']);
+//         $query->set('cat', $cat_id); // filter by category
+
+//     }
+//     else{
+//         $query->set('post__not_in', get_option('sticky_posts'));
+//     }
+// });
+// 
+// 
 
 add_action('elementor/query/blog_loop', function ($query) {
+    // Always exclude sticky posts
+    $query->set('post__not_in', get_option('sticky_posts'));
+
+
+    $work_result_cat = get_category_by_slug('作業実績');
+    if ($work_result_cat) {
+        $query->set('category__not_in', [$work_result_cat->term_id]);
+    }
+
+    // If category filter is set, override cat filter but still exclude "maker"
     if (isset($_GET['filter_cat']) && !empty($_GET['filter_cat'])) {
         $cat_id = intval($_GET['filter_cat']);
-        $query->set('cat', $cat_id); // filter by category
-
-    }
-    else{
-        $query->set('post__not_in', get_option('sticky_posts'));
+        $query->set('cat', $cat_id);
     }
 });
+
+
+add_action( 'elementor/query/work_result_filter', function( $query ) {
+
+    $work_result_category   = get_category_by_slug( '作業実績' );
+    $personal_work_category = get_category_by_slug( '家庭ゴミ' );
+	$args = [];
+
+//     if ( $work_result_category ) {		
+// 		$args = [ $work_result_category->term_id ];
+//     }
+
+    if ( isset( $_GET['type'] ) && $_GET['type'] === 'personal' && $personal_work_category ) {
+// 		array_push($args, $personal_work_category->term_id);
+		$query->set( 'category__in', [ $personal_work_category->term_id ] );
+    }
+	else if($personal_work_category){
+		  $query->set( 'category__not_in', [ $personal_work_category->term_id ] );
+	}
+	
+// 	  $query->set( 'category__in', $args );
+
+});
+
+
 
 
 // Sticky post handler

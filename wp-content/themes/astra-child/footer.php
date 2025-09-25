@@ -158,6 +158,7 @@ wp_footer();
 
         if (file.size > 1 * 1024 * 1024) { // >1MB
           resizeImage(file, 1).then(resizedFile => {
+
             if (imagesArray.length >= MAX_IMAGES) {
               showError(`最大 ${MAX_IMAGES} 枚までです`);
               return;
@@ -214,7 +215,7 @@ wp_footer();
                   type: blob.type
                 }));
               }
-            }, file.type, quality);
+            }, 'image/jpeg' , quality);
           }
 
           attemptCompress();
@@ -478,7 +479,7 @@ wp_footer();
                   type: blob.type
                 }));
               }
-            }, file.type, quality);
+            }, 'image/jpeg' , quality);
           }
 
           attemptCompress();
